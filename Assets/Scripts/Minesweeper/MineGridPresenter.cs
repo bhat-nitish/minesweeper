@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
+using Minesweeper.EventArgs;
 using MineSweeper.Models;
 using Random = System.Random;
 
@@ -16,6 +19,14 @@ namespace MineSweeper.Game.Minesweeper
         private bool gameEnd;
 
         private int cellsPlayedCount;
+
+        private bool gameWon;
+
+        public event EventHandler OnGameWin;
+
+        public event EventHandler OnMineClicked;
+
+        public event EventHandler<CellClickedEventArgs> OnCellClickHandled;
 
         public IMineGridModel _model { get; }
 
@@ -56,6 +67,88 @@ namespace MineSweeper.Game.Minesweeper
         {
             gameEnd = true;
             return true;
+        }
+
+        public void CellClicked(int x, int y)
+        {
+            var mineCellCLicked = mineCells[x, y];
+            if (mineCellCLicked == null || mineCellCLicked.IsCellPlayed || gameEnd) return;
+            if (cellsPlayedCount == 0)
+            {
+                FirstCellClicked(mineCellCLicked);
+            }
+            else
+            {
+                if (mineCellCLicked.IsMine)
+                {
+                    MineClicked();
+                }
+                else
+                {
+                    if (mineCellCLicked.MineCount > 0)
+                    {
+                        CellWithAdjacentMineClicked(mineCellCLicked);
+                    }
+                    else
+                    {
+                        CellWithNoAdjacentMineClicked(mineCellCLicked);
+                    }
+                }
+            }
+
+            if (!Checkwin()) return;
+            EndGame();
+            GameWon();
+        }
+
+        private void MineClicked()
+        {
+            gameEnd = true;
+            OnMineClicked.Trigger(this);
+        }
+
+        private void CellWithAdjacentMineClicked(MineCell mineCellCLicked)
+        {
+            IncrementPlayedCellsCount();
+            CellClicked(new CellClickedEventArgs()
+                {MineCount = mineCellCLicked.MineCount, X = mineCellCLicked.X, Y = mineCellCLicked.Y});
+        }
+
+        private void CellWithNoAdjacentMineClicked(MineCell mineCellCLicked)
+        {
+            IncrementPlayedCellsCount();
+            var adjacentCellsTraversed = TraverseAdjacentCells(new List<MineCell>(),
+                mineCellCLicked.X, mineCellCLicked.Y);
+            CellClicked(new CellClickedEventArgs()
+            {
+                AdjacentCells = adjacentCellsTraversed, X = mineCellCLicked.X,
+                Y = mineCellCLicked.Y
+            });
+        }
+
+        private void FirstCellClicked(MineCell mineCellCLicked)
+        {
+            GenerateMineLocations(mineCellCLicked.X, mineCellCLicked.Y);
+            UpdateMineCount();
+            IncrementPlayedCellsCount();
+            var adjacentCellsTraversed = TraverseAdjacentCells(new List<MineCell>(),
+                mineCellCLicked.X, mineCellCLicked.Y);
+            CellClicked(new CellClickedEventArgs()
+            {
+                AdjacentCells = adjacentCellsTraversed, IsFirstClick = true, X = mineCellCLicked.X,
+                Y = mineCellCLicked.Y
+            });
+        }
+
+        private void GameWon()
+        {
+            gameWon = true;
+            OnGameWin.Trigger(this);
+        }
+
+        private void CellClicked(CellClickedEventArgs eventArgs)
+        {
+            OnCellClickHandled.TriggerWithData(this, eventArgs);
         }
 
         public int GetPlayedCellsCount() => cellsPlayedCount;

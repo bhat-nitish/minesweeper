@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Minesweeper.EventArgs;
 using MineSweeper.Game.Minesweeper;
 using MineSweeper.Models;
 using UnityEngine;
@@ -20,6 +21,8 @@ public class MineGridView : MonoBehaviour, IMineGridView
 
     IMineGridPresenter _presenter;
 
+    private EventHandler<CellClickedEventArgs> handler;
+
     [Inject]
     public void Init(IMineGridPresenter presenter)
     {
@@ -29,8 +32,38 @@ public class MineGridView : MonoBehaviour, IMineGridView
     void Awake()
     {
         _presenter.GenerateMineGrid();
+        _presenter.OnGameWin += OnGameWin;
+        _presenter.OnCellClickHandled += OnCellClickHandled;
+        _presenter.OnMineClicked += OnMineClicked;
         mineElements = new MineCellView[_presenter.GetRows(), _presenter.GetColumns()];
         DisplayMineGrid();
+    }
+
+    public void OnGameWin(object sender, EventArgs e) => ShowWin();
+
+    public void OnMineClicked(object sender, EventArgs e) => ShowLost();
+
+    public void OnCellClickHandled(object sender, CellClickedEventArgs e)
+    {
+        if (e.IsFirstClick)
+        {
+            HandleMineGenerated();
+        }
+
+        if (e.MineCount > 0)
+        {
+            mineElements[e.X, e.Y].ShowMineCount(e.MineCount);
+        }
+        else
+        {
+            RevealAdjacentCells(e.AdjacentCells);
+        }
+    }
+
+    private void HandleMineGenerated()
+    {
+        UpdateMineCountForView();
+        PlaceMineCells();
     }
 
     public void ShowWin()
@@ -74,17 +107,12 @@ public class MineGridView : MonoBehaviour, IMineGridView
             {
                 GameObject mineGrid = new GameObject("mineGrid");
                 GameObject go;
-
-
                 xpos = -leftOffset + j * (scale + gap);
                 ypos = -topOffset + i * (scale + gap);
                 go = Instantiate(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity) as GameObject;
                 go.transform.parent = mineGrid.transform;
                 go.transform.localScale = new Vector3(scale, scale, scale);
-                //update block script data
                 MineCellView cell = go.GetComponent<MineCellView>();
-
-                //block.SpriteRenderer.sprite = sprites[SPRITE.HIDDEN];
                 cell.X = i;
                 cell.Y = j;
                 cell.Id = _presenter.GetMineCell(i, j).Id;
@@ -120,51 +148,7 @@ public class MineGridView : MonoBehaviour, IMineGridView
                 MineCellView mineCellCLicked = hit.collider.gameObject.GetComponent<MineCellView>();
                 if (mineCellCLicked != null && !mineCellCLicked.IsCellPlayed && !_presenter.HasGameEnded())
                 {
-                    if (_presenter.GetPlayedCellsCount() == 0)
-                    {
-                        _presenter.GenerateMineLocations(mineCellCLicked.X, mineCellCLicked.Y);
-                        _presenter.UpdateMineCount();
-                        UpdateMineCountForView();
-                        PlaceMineCells();
-                        _presenter.IncrementPlayedCellsCount();
-                        var adjacentCellsTraversed = _presenter.TraverseAdjacentCells(new List<MineCell>(),
-                            mineCellCLicked.X, mineCellCLicked.Y);
-                        RevealAdjacentCells(adjacentCellsTraversed);
-                        _presenter.SetMineCellAsPlayed(mineCellCLicked.X, mineCellCLicked.Y);
-                        mineElements[mineCellCLicked.X, mineCellCLicked.Y].IsCellPlayed = true;
-                    }
-                    else
-                    {
-                        if (mineCellCLicked.IsMine)
-                        {
-                            MineClicked();
-                        }
-                        else
-                        {
-                            if (mineCellCLicked.MineCount > 0)
-                            {
-                                _presenter.IncrementPlayedCellsCount();
-                                mineCellCLicked.ShowMineCount(mineCellCLicked.MineCount);
-                            }
-                            else
-                            {
-                                _presenter.IncrementPlayedCellsCount();
-                                var adjacentCellsTraversed = _presenter.TraverseAdjacentCells(new List<MineCell>(),
-                                    mineCellCLicked.X, mineCellCLicked.Y);
-                                RevealAdjacentCells(adjacentCellsTraversed);
-                            }
-                        }
-
-                        mineElements[mineCellCLicked.X, mineCellCLicked.Y].IsCellPlayed = true;
-                        _presenter.SetMineCellAsPlayed(mineCellCLicked.X, mineCellCLicked.Y);
-                    }
-
-                    bool isWin = _presenter.Checkwin();
-                    if (isWin)
-                    {
-                        _presenter.EndGame();
-                        ShowWin();
-                    }
+                    _presenter.CellClicked(mineCellCLicked.X, mineCellCLicked.Y);
                 }
             }
         }
@@ -194,5 +178,12 @@ public class MineGridView : MonoBehaviour, IMineGridView
         {
             mineElements[cell.X, cell.Y].MineCount = mineCells[cell.X, cell.Y].MineCount;
         }
+    }
+
+    public void OnDestroy()
+    {
+        _presenter.OnGameWin -= OnGameWin;
+        _presenter.OnCellClickHandled -= OnCellClickHandled;
+        _presenter.OnMineClicked -= OnMineClicked;
     }
 }

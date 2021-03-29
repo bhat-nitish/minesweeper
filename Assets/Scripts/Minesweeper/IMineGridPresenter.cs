@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Minesweeper.EventArgs;
 using MineSweeper.Models;
 
 namespace MineSweeper.Game.Minesweeper
@@ -38,5 +40,13 @@ namespace MineSweeper.Game.Minesweeper
         bool Checkwin();
 
         bool EndGame();
+
+        void CellClicked(int x, int y);
+
+        event EventHandler OnGameWin;
+
+        event EventHandler OnMineClicked;
+
+        event EventHandler<CellClickedEventArgs> OnCellClickHandled;
     }
 }
