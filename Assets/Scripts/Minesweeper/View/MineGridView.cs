@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Minesweeper.EventArgs;
 using MineSweeper.Game.Minesweeper;
 using MineSweeper.Models;
 using MineSweeper.View;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 public class MineGridView : MonoBehaviour
@@ -16,6 +15,10 @@ public class MineGridView : MonoBehaviour
     private MineCellView[,] mineElements;
 
     [SerializeField] public GameObject mineCell;
+
+    public GameObject tickingBombAudio;
+
+    private TickingBombAudio _tickingBombAudio;
 
     private float scale = .4f;
 
@@ -62,6 +65,13 @@ public class MineGridView : MonoBehaviour
         _presenter.OnMineClicked += OnMineClicked;
         mineElements = new MineCellView[_presenter.GetRows(), _presenter.GetColumns()];
         DisplayMineGrid();
+        InitializeAudio();
+    }
+
+    private void InitializeAudio()
+    {
+        var tickingBombAudioClip = Instantiate(tickingBombAudio);
+        _tickingBombAudio = tickingBombAudioClip.GetComponent<TickingBombAudio>();
     }
 
     public void Update()
@@ -100,9 +110,19 @@ public class MineGridView : MonoBehaviour
 
     private void ShowLost()
     {
-        foreach (var cell in mineElements)
+        _tickingBombAudio.Play();
+        StartCoroutine(RevealAllCellsInLostModeWithDelay(1.5f));
+    }
+
+    IEnumerator RevealAllCellsInLostModeWithDelay(float delay)
+    {
+        while (true)
         {
-            cell.ShowLost();
+            yield return new WaitForSeconds(delay);
+            foreach (var cell in mineElements)
+            {
+                cell.ShowLost();
+            }
         }
     }
 
@@ -141,6 +161,8 @@ public class MineGridView : MonoBehaviour
                 ypos = -topOffset + i * (scale + gap);
                 go = Instantiate(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity) as GameObject;
                 go.transform.parent = mineGrid.transform;
+                go.transform.localScale = new Vector3(scale, scale, scale);
+                go.transform.localScale = new Vector3(scale, scale, scale);
                 go.transform.localScale = new Vector3(scale, scale, scale);
                 MineCellView cell = go.GetComponent<MineCellView>();
                 cell.X = i;

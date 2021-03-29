@@ -344,6 +344,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mineCell: {fileID: 4989543158603352509, guid: a9092192ec32845b5984b3fd45f9fe0d,
     type: 3}
+  tickingBombAudio: {fileID: 8544240299222055553, guid: a2f92743940a34d6db7ddaa4fe693c39,
+    type: 3}
 --- !u!4 &1718215001
 Transform:
   m_ObjectHideFlags: 0
