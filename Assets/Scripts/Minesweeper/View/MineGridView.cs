@@ -4,11 +4,15 @@ using System.Linq;
 using Minesweeper.EventArgs;
 using MineSweeper.Game.Minesweeper;
 using MineSweeper.Models;
+using MineSweeper.View;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
-public class MineGridView : MonoBehaviour, IMineGridView
+public class MineGridView : MonoBehaviour
 {
+    #region Properties
+
     private MineCellView[,] mineElements;
 
     [SerializeField] public GameObject mineCell;
@@ -19,31 +23,17 @@ public class MineGridView : MonoBehaviour, IMineGridView
 
     private float leftOffset, topOffset;
 
-    IMineGridPresenter _presenter;
+    private IMineGridPresenter _presenter;
 
-    private EventHandler<CellClickedEventArgs> handler;
+    #endregion
 
-    [Inject]
-    public void Init(IMineGridPresenter presenter)
-    {
-        _presenter = presenter;
-    }
+    #region Event Handler Subscription
 
-    void Awake()
-    {
-        _presenter.GenerateMineGrid();
-        _presenter.OnGameWin += OnGameWin;
-        _presenter.OnCellClickHandled += OnCellClickHandled;
-        _presenter.OnMineClicked += OnMineClicked;
-        mineElements = new MineCellView[_presenter.GetRows(), _presenter.GetColumns()];
-        DisplayMineGrid();
-    }
+    private void OnGameWin(object sender, EventArgs e) => ShowWin();
 
-    public void OnGameWin(object sender, EventArgs e) => ShowWin();
+    private void OnMineClicked(object sender, EventArgs e) => ShowLost();
 
-    public void OnMineClicked(object sender, EventArgs e) => ShowLost();
-
-    public void OnCellClickHandled(object sender, CellClickedEventArgs e)
+    private void OnCellClickHandled(object sender, CellClickedEventArgs e)
     {
         if (e.IsFirstClick)
         {
@@ -60,13 +50,47 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    private void HandleMineGenerated()
+    #endregion
+
+    #region MonoBehvariour Lifecycle
+
+    void Awake()
     {
-        UpdateMineCountForView();
-        PlaceMineCells();
+        _presenter.GenerateMineGrid();
+        _presenter.OnGameWin += OnGameWin;
+        _presenter.OnCellClickHandled += OnCellClickHandled;
+        _presenter.OnMineClicked += OnMineClicked;
+        mineElements = new MineCellView[_presenter.GetRows(), _presenter.GetColumns()];
+        DisplayMineGrid();
     }
 
-    public void ShowWin()
+    public void Update()
+    {
+        HandleLeftClick();
+    }
+
+    private void OnDestroy()
+    {
+        _presenter.OnGameWin -= OnGameWin;
+        _presenter.OnCellClickHandled -= OnCellClickHandled;
+        _presenter.OnMineClicked -= OnMineClicked;
+    }
+
+    #endregion
+
+    #region Dependency Injection
+
+    [Inject]
+    private void Init(IMineGridPresenter presenter)
+    {
+        _presenter = presenter;
+    }
+
+    #endregion
+
+    #region Game Play
+
+    private void ShowWin()
     {
         foreach (var cell in mineElements)
         {
@@ -74,7 +98,7 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    public void ShowLost()
+    private void ShowLost()
     {
         foreach (var cell in mineElements)
         {
@@ -82,7 +106,13 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    public void PlaceMineCells()
+    private void HandleMineGenerated()
+    {
+        UpdateMineCountForView();
+        PlaceMineCells();
+    }
+
+    private void PlaceMineCells()
     {
         for (int i = 0; i < _presenter.GetRows(); i++)
         {
@@ -94,7 +124,7 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    public void DisplayMineGrid()
+    private void DisplayMineGrid()
     {
         float xpos, ypos, zpos = 89;
 
@@ -123,22 +153,7 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    void Update()
-    {
-        HandleLeftClick();
-    }
-
-    public void MineClicked()
-    {
-        foreach (var mineCellView in mineElements)
-        {
-            mineCellView.IsCellPlayed = true;
-        }
-
-        ShowLost();
-    }
-
-    public void HandleLeftClick()
+    private void HandleLeftClick()
     {
         if (Input.GetMouseButtonUp(0))
         {
@@ -154,7 +169,7 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    public void RevealAdjacentCells(List<MineCell> adjacentCells)
+    private void RevealAdjacentCells(List<MineCell> adjacentCells)
     {
         foreach (var cell in adjacentCells)
         {
@@ -162,16 +177,7 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    private void RevealMineGrid()
-    {
-        var mineCells = _presenter.GetMineCells();
-        foreach (var cell in mineCells)
-        {
-            mineElements[cell.X, cell.Y].ShowMineCount(cell.MineCount);
-        }
-    }
-
-    public void UpdateMineCountForView()
+    private void UpdateMineCountForView()
     {
         var mineCells = _presenter.GetMineCells();
         foreach (var cell in mineCells)
@@ -180,10 +186,5 @@ public class MineGridView : MonoBehaviour, IMineGridView
         }
     }
 
-    public void OnDestroy()
-    {
-        _presenter.OnGameWin -= OnGameWin;
-        _presenter.OnCellClickHandled -= OnCellClickHandled;
-        _presenter.OnMineClicked -= OnMineClicked;
-    }
+    #endregion
 }

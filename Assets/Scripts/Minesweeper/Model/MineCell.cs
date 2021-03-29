@@ -1,15 +1,7 @@
+using Minesweeper.Model;
+
 namespace MineSweeper.Models
 {
-    public interface IMineCell
-    {
-        int Id { get; set; }
-        int X { get; set; }
-        int Y { get; set; }
-        bool IsMine { get; set; }
-        bool IsCellPlayed { get; set; }
-        int MineCount { get; set; }
-    }
-
     public class MineCell : IMineCell
     {
         public int Id { get; set; }
