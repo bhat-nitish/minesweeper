@@ -44,12 +44,14 @@ namespace MineSweeper.Game.Minesweeper
 
         public event EventHandler OnMineClicked;
 
+        public event EventHandler GameStarted;
+
         public event EventHandler<CellClickedEventArgs> OnCellClickHandled;
 
         #endregion
 
         #region Helpers
-        
+
         private bool InGrid(int x, int y) => (x >= 0 && x < Model.GetRows()) && (y >= 0 && y < Model.GetColumns());
 
         private int CalculateMineCountForAdjacentCells(List<MineCell> adjacentCells) =>
@@ -62,8 +64,9 @@ namespace MineSweeper.Game.Minesweeper
         public MineCell[,] GetMineCells() => MineCells;
 
         public MineCell GetMineCell(int x, int y) => MineCells[x, y];
-        
+
         public bool HasGameEnded() => GameEnd;
+        public int GetMineCount() => Model.GetMineCount();
 
         #endregion
 
@@ -74,7 +77,7 @@ namespace MineSweeper.Game.Minesweeper
             int id = 1;
             for (int i = 0; i < Model.GetRows(); i++)
             {
-                for (int j = 0; j < Model.GetRows(); j++)
+                for (int j = 0; j < Model.GetColumns(); j++)
                 {
                     MineCells[i, j] = new MineCell()
                     {
@@ -197,6 +200,11 @@ namespace MineSweeper.Game.Minesweeper
             OnGameWin.Trigger(this);
         }
 
+        private void StartGame()
+        {
+            GameStarted.Trigger(this);
+        }
+
         #endregion
 
         #region Game Play
@@ -275,6 +283,7 @@ namespace MineSweeper.Game.Minesweeper
                 AdjacentCells = adjacentCellsTraversed, IsFirstClick = true, X = mineCellCLicked.X,
                 Y = mineCellCLicked.Y
             });
+            StartGame();
         }
 
         private bool IncrementPlayedCellsCount()

@@ -20,5 +20,7 @@ namespace MineSweeper.Game.Minesweeper
         void GenerateMineGrid();
 
         void CellClicked(int x, int y);
+
+        int GetMineCount();
     }
 }

@@ -2,11 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Base;
 using Minesweeper.EventArgs;
 using MineSweeper.Game.Minesweeper;
 using MineSweeper.Models;
 using MineSweeper.View;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public class MineGridView : MonoBehaviour
@@ -17,6 +20,10 @@ public class MineGridView : MonoBehaviour
 
     [SerializeField] public GameObject mineCell;
 
+    public TextMeshProUGUI gameEndMessage;
+
+    public Button mainMenuBtn;
+
     public GameObject tickingBombAudio;
 
     public GameObject cellClickAudio;
@@ -25,6 +32,10 @@ public class MineGridView : MonoBehaviour
 
     public GameObject gameWonAudio;
 
+    public TextMeshProUGUI timer;
+
+    public TextMeshProUGUI mineCountDisplay;
+
     private TickingBombAudio _tickingBombAudio;
 
     private CellClickedAudio _cellClickedAudio;
@@ -32,6 +43,8 @@ public class MineGridView : MonoBehaviour
     private MineClickedAudio _mineClickedAudio;
 
     private GameWonAudio _gameWonAudio;
+
+    private TimeSpan _startTime;
 
     private float scale = .4f;
 
@@ -42,6 +55,10 @@ public class MineGridView : MonoBehaviour
     private IMineGridPresenter _presenter;
 
     private DiContainer _container;
+
+    private int minutes, seconds, milliseconds;
+
+    private bool gameInProgress;
 
     #endregion
 
@@ -69,6 +86,13 @@ public class MineGridView : MonoBehaviour
         }
     }
 
+    private void OnGameStarted(object sender, EventArgs e)
+    {
+        gameInProgress = true;
+        _startTime = DateTime.UtcNow.TimeOfDay;
+        StartCoroutine(RunTimer());
+    }
+
     #endregion
 
     #region MonoBehvariour Lifecycle
@@ -79,9 +103,33 @@ public class MineGridView : MonoBehaviour
         _presenter.OnGameWin += OnGameWin;
         _presenter.OnCellClickHandled += OnCellClickHandled;
         _presenter.OnMineClicked += OnMineClicked;
+        _presenter.GameStarted += OnGameStarted;
+        mainMenuBtn.onClick.AddListener(ReturnToMiainMenu);
         mineElements = new MineCellView[_presenter.GetRows(), _presenter.GetColumns()];
         DisplayMineGrid();
+        DisplayMineCount();
         InitializeAudio();
+    }
+
+    private void ShowGameOver()
+    {
+        gameEndMessage.SetText("Game Over");
+    }
+
+    private void ShowGameWon()
+    {
+        gameEndMessage.SetText("Game Won");
+    }
+
+    private void UpdateTimer()
+    {
+        var timeElapsed = DateTime.Now - _startTime;
+        timer.SetText($"{timeElapsed.Hour - 1:00}:{timeElapsed.Minute:00}:{timeElapsed.Second:00}");
+    }
+
+    private void DisplayMineCount()
+    {
+        mineCountDisplay.SetText("Mine Count : " + _presenter.GetMineCount());
     }
 
     private void InitializeAudio()
@@ -129,7 +177,9 @@ public class MineGridView : MonoBehaviour
     private void ShowWin()
     {
         _gameWonAudio.Play();
+        gameInProgress = false;
         StartCoroutine(ShowWinWithDelay(0.2f));
+        StopCoroutine(RunTimer());
     }
 
     IEnumerator ShowWinWithDelay(float delay)
@@ -141,6 +191,17 @@ public class MineGridView : MonoBehaviour
             {
                 cell.ShowWin();
             }
+
+            ShowGameWon();
+        }
+    }
+
+    IEnumerator RunTimer()
+    {
+        while (gameInProgress)
+        {
+            yield return new WaitForSeconds(0.2f);
+            UpdateTimer();
         }
     }
 
@@ -148,7 +209,14 @@ public class MineGridView : MonoBehaviour
     {
         _mineClickedAudio.Play();
         _tickingBombAudio.Play();
+        gameInProgress = false;
         StartCoroutine(RevealAllCellsInLostModeWithDelay(2f));
+        StopCoroutine(RunTimer());
+    }
+
+    public void ReturnToMiainMenu()
+    {
+        GameNavigator.NavigateToScene(GameScenes.Menu);
     }
 
     IEnumerator RevealAllCellsInLostModeWithDelay(float delay)
@@ -160,6 +228,8 @@ public class MineGridView : MonoBehaviour
             {
                 cell.ShowLost();
             }
+
+            ShowGameOver();
         }
     }
 
@@ -199,9 +269,7 @@ public class MineGridView : MonoBehaviour
 
                 go = _container.InstantiatePrefab(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity,
                     mineGrid.transform);
-                //go = Instantiate(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity) as GameObject;
                 go.transform.parent = mineGrid.transform;
-                go.transform.localScale = new Vector3(scale, scale, scale);
                 go.transform.localScale = new Vector3(scale, scale, scale);
                 MineCellView cell = go.GetComponent<MineCellView>();
                 cell.X = i;

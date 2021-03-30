@@ -9,6 +9,8 @@ namespace MineSweeper.Game.Minesweeper
 
         event EventHandler OnMineClicked;
 
+        event EventHandler GameStarted;
+
         event EventHandler<CellClickedEventArgs> OnCellClickHandled;
     }
 }
