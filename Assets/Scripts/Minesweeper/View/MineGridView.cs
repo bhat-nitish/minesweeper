@@ -20,8 +20,6 @@ public class MineGridView : MonoBehaviour
 
     [SerializeField] public GameObject mineCell;
 
-    public TextMeshProUGUI gameEndMessage;
-
     public Button mainMenuBtn;
 
     public GameObject tickingBombAudio;
@@ -111,16 +109,6 @@ public class MineGridView : MonoBehaviour
         InitializeAudio();
     }
 
-    private void ShowGameOver()
-    {
-        gameEndMessage.SetText("Game Over");
-    }
-
-    private void ShowGameWon()
-    {
-        gameEndMessage.SetText("Game Won");
-    }
-
     private void UpdateTimer()
     {
         var timeElapsed = DateTime.Now - _startTime;
@@ -191,8 +179,6 @@ public class MineGridView : MonoBehaviour
             {
                 cell.ShowWin();
             }
-
-            ShowGameWon();
         }
     }
 
@@ -228,8 +214,6 @@ public class MineGridView : MonoBehaviour
             {
                 cell.ShowLost();
             }
-
-            ShowGameOver();
         }
     }
 
