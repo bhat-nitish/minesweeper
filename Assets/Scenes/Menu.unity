@@ -346,6 +346,12 @@ MonoBehaviour:
     type: 3}
   tickingBombAudio: {fileID: 8544240299222055553, guid: a2f92743940a34d6db7ddaa4fe693c39,
     type: 3}
+  cellClickAudio: {fileID: 4493096414265026962, guid: 0b14cc10a06444ffe9667620c8611fad,
+    type: 3}
+  mineClickAudio: {fileID: 3787314078450507945, guid: 0032b62f1bb7b4fe7a7ff113df113748,
+    type: 3}
+  gameWonAudio: {fileID: 3406882553826715457, guid: 913633e26d3824739bc5ca46d34450a8,
+    type: 3}
 --- !u!4 &1718215001
 Transform:
   m_ObjectHideFlags: 0

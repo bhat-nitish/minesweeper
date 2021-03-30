@@ -22,8 +22,6 @@ namespace MineSweeper.Game.Minesweeper
 
         private int CellsPlayedCount;
 
-        private bool GameWon;
-
         private IMineGridModel Model { get; }
 
         #endregion
@@ -196,7 +194,6 @@ namespace MineSweeper.Game.Minesweeper
 
         private void MarkWin()
         {
-            GameWon = true;
             OnGameWin.Trigger(this);
         }
 

@@ -14,7 +14,7 @@ namespace MineSweeper.Game.Minesweeper
         {
             rows = 15;
             columns = 15;
-            mineCount = 10;
+            mineCount = 50;
         }
 
         public int GetRows()

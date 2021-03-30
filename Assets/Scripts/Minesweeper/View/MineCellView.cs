@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MineSweeper.Game.Minesweeper;
 using Minesweeper.Model;
 using MineSweeper.Models;
+using Minesweeper.View;
 using UnityEngine;
+using Zenject;
 
 namespace MineSweeper.View
 {
@@ -18,72 +21,64 @@ namespace MineSweeper.View
 
         public int MineCount { get; set; }
 
-        private SpriteRenderer spriteRenderer;
+        private SpriteRenderer spriteRenderer = new SpriteRenderer();
 
-        void SetProperties(int id, int x, int y, bool isMine, bool isCellPlayed)
+        private IMineSpriteRenderer _mineSpriteRenderer;
+
+        #region Dependency Injection
+
+        [Inject]
+        private void Init(IMineSpriteRenderer mineSpriteRenderer)
         {
-            Id = id;
-            X = x;
-            Y = y;
-            IsMine = isMine;
-            IsCellPlayed = isCellPlayed;
+            _mineSpriteRenderer = mineSpriteRenderer;
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-            if (IsMine)
-            {
-                spriteRenderer.sprite = Resources.Load<Sprite>("minelost");
-            }
-            else
-            {
-                spriteRenderer.sprite = Resources.Load<Sprite>("hidden");
-            }
-        }
+        #endregion
 
-        public void ShowMine()
+        void Awake()
         {
-            spriteRenderer.sprite = Resources.Load<Sprite>("minelost");
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            var sprite = _mineSpriteRenderer.GetSprite(MineSprite.Hidden);
+            if (sprite == null || spriteRenderer == null) return;
+            spriteRenderer.sprite = sprite;
         }
 
         public void ShowWin()
         {
             if (IsMine)
             {
-                spriteRenderer.sprite = Resources.Load<Sprite>("minewon");
+                spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.MineWon);
             }
             else
             {
                 switch (MineCount)
                 {
                     case 0:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("revealedwon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.RevealedWon);
                         break;
                     case 1:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("onewon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.OneWon);
                         break;
                     case 2:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("twowon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.TwoWon);
                         break;
                     case 3:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("threewon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.ThreeWon);
                         break;
                     case 4:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("fourwon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.FourWon);
                         break;
                     case 5:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("fivewon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.FiveWon);
                         break;
                     case 6:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("sixwon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.SixWon);
                         break;
                     case 7:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("sevenwon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.SevenWon);
                         break;
                     case 8:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("eightwon");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.EightWon);
                         break;
                 }
             }
@@ -93,38 +88,38 @@ namespace MineSweeper.View
         {
             if (IsMine)
             {
-                spriteRenderer.sprite = Resources.Load<Sprite>("minelost");
+                spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.MineLost);
             }
             else
             {
                 switch (MineCount)
                 {
                     case 0:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("revealedlost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.RevealedLost);
                         break;
                     case 1:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("onelost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.OneLost);
                         break;
                     case 2:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("twolost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.TwoLost);
                         break;
                     case 3:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("threelost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.ThreeLost);
                         break;
                     case 4:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("fourlost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.FourLost);
                         break;
                     case 5:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("fivelost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.FiveLost);
                         break;
                     case 6:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("sixlost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.SixLost);
                         break;
                     case 7:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("sevenlost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.SevenLost);
                         break;
                     case 8:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("eightlost");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.EightLost);
                         break;
                 }
             }
@@ -134,58 +129,41 @@ namespace MineSweeper.View
         {
             if (IsMine)
             {
-                spriteRenderer.sprite = Resources.Load<Sprite>("minelost");
+                spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.MineLost);
             }
             else
             {
-                switch (count)
+                switch (MineCount)
                 {
                     case 0:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("revealed");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.Revealed);
                         break;
                     case 1:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("oneplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.OnePlay);
                         break;
                     case 2:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("twoplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.TwoPlay);
                         break;
                     case 3:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("threeplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.ThreePlay);
                         break;
                     case 4:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("fourplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.FourPlay);
                         break;
                     case 5:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("fiveplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.FivePlay);
                         break;
                     case 6:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("sixplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.SixPlay);
                         break;
                     case 7:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("sevenplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.SevenPlay);
                         break;
                     case 8:
-                        spriteRenderer.sprite = Resources.Load<Sprite>("eightplay");
+                        spriteRenderer.sprite = _mineSpriteRenderer.GetSprite(MineSprite.EightPlay);
                         break;
                 }
             }
-        }
-
-        void InitialRender()
-        {
-            if (IsMine)
-            {
-                spriteRenderer.sprite = Resources.Load<Sprite>("mark");
-            }
-            else
-            {
-                spriteRenderer.sprite = Resources.Load<Sprite>("minelost");
-            }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
     }
 }

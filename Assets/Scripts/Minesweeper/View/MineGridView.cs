@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Minesweeper.EventArgs;
 using MineSweeper.Game.Minesweeper;
 using MineSweeper.Models;
@@ -18,7 +19,19 @@ public class MineGridView : MonoBehaviour
 
     public GameObject tickingBombAudio;
 
+    public GameObject cellClickAudio;
+
+    public GameObject mineClickAudio;
+
+    public GameObject gameWonAudio;
+
     private TickingBombAudio _tickingBombAudio;
+
+    private CellClickedAudio _cellClickedAudio;
+
+    private MineClickedAudio _mineClickedAudio;
+
+    private GameWonAudio _gameWonAudio;
 
     private float scale = .4f;
 
@@ -27,6 +40,8 @@ public class MineGridView : MonoBehaviour
     private float leftOffset, topOffset;
 
     private IMineGridPresenter _presenter;
+
+    private DiContainer _container;
 
     #endregion
 
@@ -38,6 +53,7 @@ public class MineGridView : MonoBehaviour
 
     private void OnCellClickHandled(object sender, CellClickedEventArgs e)
     {
+        _cellClickedAudio.Play();
         if (e.IsFirstClick)
         {
             HandleMineGenerated();
@@ -72,6 +88,15 @@ public class MineGridView : MonoBehaviour
     {
         var tickingBombAudioClip = Instantiate(tickingBombAudio);
         _tickingBombAudio = tickingBombAudioClip.GetComponent<TickingBombAudio>();
+
+        var cellClickedAudioClip = Instantiate(cellClickAudio);
+        _cellClickedAudio = cellClickedAudioClip.GetComponent<CellClickedAudio>();
+
+        var mineClickedAudioClip = Instantiate(mineClickAudio);
+        _mineClickedAudio = mineClickedAudioClip.GetComponent<MineClickedAudio>();
+
+        var gameWonAudioClip = Instantiate(gameWonAudio);
+        _gameWonAudio = gameWonAudioClip.GetComponent<GameWonAudio>();
     }
 
     public void Update()
@@ -91,9 +116,10 @@ public class MineGridView : MonoBehaviour
     #region Dependency Injection
 
     [Inject]
-    private void Init(IMineGridPresenter presenter)
+    private void Init(IMineGridPresenter presenter, DiContainer container)
     {
         _presenter = presenter;
+        _container = container;
     }
 
     #endregion
@@ -102,16 +128,27 @@ public class MineGridView : MonoBehaviour
 
     private void ShowWin()
     {
-        foreach (var cell in mineElements)
+        _gameWonAudio.Play();
+        StartCoroutine(ShowWinWithDelay(0.2f));
+    }
+
+    IEnumerator ShowWinWithDelay(float delay)
+    {
+        while (true)
         {
-            cell.ShowWin();
+            yield return new WaitForSeconds(delay);
+            foreach (var cell in mineElements)
+            {
+                cell.ShowWin();
+            }
         }
     }
 
     private void ShowLost()
     {
+        _mineClickedAudio.Play();
         _tickingBombAudio.Play();
-        StartCoroutine(RevealAllCellsInLostModeWithDelay(1.5f));
+        StartCoroutine(RevealAllCellsInLostModeWithDelay(2f));
     }
 
     IEnumerator RevealAllCellsInLostModeWithDelay(float delay)
@@ -159,9 +196,11 @@ public class MineGridView : MonoBehaviour
                 GameObject go;
                 xpos = -leftOffset + j * (scale + gap);
                 ypos = -topOffset + i * (scale + gap);
-                go = Instantiate(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity) as GameObject;
+
+                go = _container.InstantiatePrefab(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity,
+                    mineGrid.transform);
+                //go = Instantiate(mineCell, new Vector3(xpos, ypos, zpos), Quaternion.identity) as GameObject;
                 go.transform.parent = mineGrid.transform;
-                go.transform.localScale = new Vector3(scale, scale, scale);
                 go.transform.localScale = new Vector3(scale, scale, scale);
                 go.transform.localScale = new Vector3(scale, scale, scale);
                 MineCellView cell = go.GetComponent<MineCellView>();
