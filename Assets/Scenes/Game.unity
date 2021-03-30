@@ -155,7 +155,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 55, y: 1041}
+  m_AnchoredPosition: {x: 55, y: 1109}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &477382806
@@ -603,7 +603,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 447, y: 1041}
+  m_AnchoredPosition: {x: 447, y: 1113}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1454624307
@@ -778,7 +778,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mineCell: {fileID: 4989543158603352509, guid: a9092192ec32845b5984b3fd45f9fe0d,
     type: 3}
-  gameEndMessage: {fileID: 0}
   mainMenuBtn: {fileID: 2104580634}
   tickingBombAudio: {fileID: 8544240299222055553, guid: a2f92743940a34d6db7ddaa4fe693c39,
     type: 3}
@@ -987,7 +986,7 @@ PrefabInstance:
     - target: {fileID: 4532120660567395643, guid: 76e64f05758d24c2580e55b99597e6e1,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 499
+      value: 571
       objectReference: {fileID: 0}
     - target: {fileID: 4532120660567395643, guid: 76e64f05758d24c2580e55b99597e6e1,
         type: 3}
