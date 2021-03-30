@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: minespriteatlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 1
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 2defeadf18a9c426e987dd0890077019, type: 3}
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 7f547a41031524e42941b0139110099d, type: 3}
+  - {fileID: 21300000, guid: 92efadb1c81f54beeb96ab9dd68762d8, type: 3}
+  - {fileID: 21300000, guid: 10af1cc116be54d21bf4565b51e580d0, type: 3}
+  - {fileID: 21300000, guid: 3a1421d129b774273976b74cd7cc0e95, type: 3}
+  - {fileID: 21300000, guid: fa51362326c82494fa26eb962615aec1, type: 3}
+  - {fileID: 21300000, guid: c71fc6e3039fc4a3aa999b1fb9745fd7, type: 3}
+  - {fileID: 21300000, guid: e0e412452c0bb46b0afb4a6c61afb709, type: 3}
+  - {fileID: 21300000, guid: ce753c556efb84b0a90a0a06789a1152, type: 3}
+  - {fileID: 21300000, guid: 5bd22da5fc4bf4596a77423fc7dce0ef, type: 3}
+  - {fileID: 21300000, guid: 4dacff360008148ea8fa75504ebbffa4, type: 3}
+  - {fileID: 21300000, guid: 4994bd5618d874c419d07270fd7357e8, type: 3}
+  - {fileID: 21300000, guid: 3024d707bdb5b40c2af6459b1b89011e, type: 3}
+  - {fileID: 21300000, guid: 567f8127896c545eaacaf9fac67bc9dd, type: 3}
+  - {fileID: 21300000, guid: fd996927cedbc4416b3c3efeb94f9f67, type: 3}
+  - {fileID: 21300000, guid: 0c7d3457e917644889a24879c9f54eb7, type: 3}
+  - {fileID: 21300000, guid: d58d8a778cf3542aabcb55b967085d0a, type: 3}
+  - {fileID: 21300000, guid: 3c8e46e7794364969a5aee493a641fd8, type: 3}
+  - {fileID: 21300000, guid: 2ff96ca89445142268bbff427024e91b, type: 3}
+  - {fileID: 21300000, guid: 0229e3b8709534bdfbcc839e9a666278, type: 3}
+  - {fileID: 21300000, guid: 45e916d81d37f4858ae3cb5f9a64455c, type: 3}
+  - {fileID: 21300000, guid: 80aed43a3c1474608abbbb443212bdc5, type: 3}
+  - {fileID: 21300000, guid: cdec818ad2e8e4bc5b0750326cc1b5b0, type: 3}
+  - {fileID: 21300000, guid: d4e9555bfd3a449b99aed7ed1cf36235, type: 3}
+  - {fileID: 21300000, guid: ee52db6bc073341b1a54ec0ac2012f31, type: 3}
+  - {fileID: 21300000, guid: 1c881dbb238374d3cb3296558f8343cd, type: 3}
+  - {fileID: 21300000, guid: 658809cbef75c4e7a9f67ab6e8e6031d, type: 3}
+  - {fileID: 21300000, guid: 77a6e48cde0d74bfebbeacc60b48bb30, type: 3}
+  - {fileID: 21300000, guid: c4b28eecb80f94b0f9a057f089f3b5d8, type: 3}
+  - {fileID: 21300000, guid: b02c4c3d4e7404936bb065dc2fb4b448, type: 3}
+  - {fileID: 21300000, guid: b384c5dd7ef724c878ffb966ae651be2, type: 3}
+  - {fileID: 21300000, guid: 2abb939e2be9145c4b1f2e73cdb1a9d1, type: 3}
+  - {fileID: 21300000, guid: 421914fe4cfcb41b1b165a5e0d651235, type: 3}
+  - {fileID: 21300000, guid: 770b65afecedf4d5b823a797ed28798a, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - sevenlost
+  - twoplay
+  - twolost
+  - fourplay
+  - mark
+  - twowon
+  - sixwon
+  - fiveplay
+  - fivelost
+  - onewon
+  - sevenwon
+  - eightwon
+  - sixplay
+  - minelost
+  - sevenplay
+  - eightplay
+  - question
+  - hidden
+  - onelost
+  - sixlost
+  - oneplay
+  - fivewon
+  - threeplay
+  - revealed
+  - revealedwon
+  - threelost
+  - flag
+  - fourlost
+  - minewon
+  - revealedlost
+  - threewon
+  - eightlost
+  - fourwon
+  m_Tag: minespriteatlas
+  m_IsVariant: 0

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 namespace Minesweeper.View
 {
@@ -10,51 +11,51 @@ namespace Minesweeper.View
 
     public class MineSpriteRenderer : IMineSpriteRenderer
     {
-        private SpriteRenderer spriteRenderer;
-
         private Dictionary<MineSprite, Sprite> mineSprites = new Dictionary<MineSprite, Sprite>();
 
         public MineSpriteRenderer()
         {
-            LoadAllSprites();
+            LoadAllSpritesFromSpriteAtlas();
         }
 
-        private void LoadAllSprites()
+        private void LoadAllSpritesFromSpriteAtlas()
         {
-            mineSprites.Add(MineSprite.OnePlay, Resources.Load<Sprite>("oneplay"));
-            mineSprites.Add(MineSprite.TwoPlay, Resources.Load<Sprite>("twoplay"));
-            mineSprites.Add(MineSprite.ThreePlay, Resources.Load<Sprite>("threeplay"));
-            mineSprites.Add(MineSprite.FourPlay, Resources.Load<Sprite>("fourplay"));
-            mineSprites.Add(MineSprite.FivePlay, Resources.Load<Sprite>("fiveplay"));
-            mineSprites.Add(MineSprite.SixPlay, Resources.Load<Sprite>("sixplay"));
-            mineSprites.Add(MineSprite.SevenPlay, Resources.Load<Sprite>("sevenplay"));
-            mineSprites.Add(MineSprite.EightPlay, Resources.Load<Sprite>("rightplay"));
+            var mineSpriteAtlas = Resources.Load<SpriteAtlas>("minespriteatlas");
+            
+            mineSprites.Add(MineSprite.OnePlay, mineSpriteAtlas.GetSprite("oneplay"));
+            mineSprites.Add(MineSprite.TwoPlay, mineSpriteAtlas.GetSprite("twoplay"));
+            mineSprites.Add(MineSprite.ThreePlay, mineSpriteAtlas.GetSprite("threeplay"));
+            mineSprites.Add(MineSprite.FourPlay, mineSpriteAtlas.GetSprite("fourplay"));
+            mineSprites.Add(MineSprite.FivePlay, mineSpriteAtlas.GetSprite("fiveplay"));
+            mineSprites.Add(MineSprite.SixPlay, mineSpriteAtlas.GetSprite("sixplay"));
+            mineSprites.Add(MineSprite.SevenPlay, mineSpriteAtlas.GetSprite("sevenplay"));
+            mineSprites.Add(MineSprite.EightPlay, mineSpriteAtlas.GetSprite("rightplay"));
 
-            mineSprites.Add(MineSprite.OneWon, Resources.Load<Sprite>("onewon"));
-            mineSprites.Add(MineSprite.TwoWon, Resources.Load<Sprite>("twowon"));
-            mineSprites.Add(MineSprite.ThreeWon, Resources.Load<Sprite>("threewon"));
-            mineSprites.Add(MineSprite.FourWon, Resources.Load<Sprite>("fourwon"));
-            mineSprites.Add(MineSprite.FiveWon, Resources.Load<Sprite>("fivewon"));
-            mineSprites.Add(MineSprite.SixWon, Resources.Load<Sprite>("sixwon"));
-            mineSprites.Add(MineSprite.SevenWon, Resources.Load<Sprite>("sevenwon"));
-            mineSprites.Add(MineSprite.EightWon, Resources.Load<Sprite>("eightwon"));
+            mineSprites.Add(MineSprite.OneWon, mineSpriteAtlas.GetSprite("onewon"));
+            mineSprites.Add(MineSprite.TwoWon, mineSpriteAtlas.GetSprite("twowon"));
+            mineSprites.Add(MineSprite.ThreeWon, mineSpriteAtlas.GetSprite("threewon"));
+            mineSprites.Add(MineSprite.FourWon, mineSpriteAtlas.GetSprite("fourwon"));
+            mineSprites.Add(MineSprite.FiveWon, mineSpriteAtlas.GetSprite("fivewon"));
+            mineSprites.Add(MineSprite.SixWon, mineSpriteAtlas.GetSprite("sixwon"));
+            mineSprites.Add(MineSprite.SevenWon, mineSpriteAtlas.GetSprite("sevenwon"));
+            mineSprites.Add(MineSprite.EightWon, mineSpriteAtlas.GetSprite("eightwon"));
 
-            mineSprites.Add(MineSprite.OneLost, Resources.Load<Sprite>("onelost"));
-            mineSprites.Add(MineSprite.TwoLost, Resources.Load<Sprite>("twolost"));
-            mineSprites.Add(MineSprite.ThreeLost, Resources.Load<Sprite>("threelost"));
-            mineSprites.Add(MineSprite.FourLost, Resources.Load<Sprite>("fourlost"));
-            mineSprites.Add(MineSprite.FiveLost, Resources.Load<Sprite>("fivelost"));
-            mineSprites.Add(MineSprite.SixLost, Resources.Load<Sprite>("sixlost"));
-            mineSprites.Add(MineSprite.SevenLost, Resources.Load<Sprite>("sevenlost"));
-            mineSprites.Add(MineSprite.EightLost, Resources.Load<Sprite>("eightlost"));
+            mineSprites.Add(MineSprite.OneLost, mineSpriteAtlas.GetSprite("onelost"));
+            mineSprites.Add(MineSprite.TwoLost, mineSpriteAtlas.GetSprite("twolost"));
+            mineSprites.Add(MineSprite.ThreeLost, mineSpriteAtlas.GetSprite("threelost"));
+            mineSprites.Add(MineSprite.FourLost, mineSpriteAtlas.GetSprite("fourlost"));
+            mineSprites.Add(MineSprite.FiveLost, mineSpriteAtlas.GetSprite("fivelost"));
+            mineSprites.Add(MineSprite.SixLost, mineSpriteAtlas.GetSprite("sixlost"));
+            mineSprites.Add(MineSprite.SevenLost, mineSpriteAtlas.GetSprite("sevenlost"));
+            mineSprites.Add(MineSprite.EightLost, mineSpriteAtlas.GetSprite("eightlost"));
 
-            mineSprites.Add(MineSprite.MineWon, Resources.Load<Sprite>("minewon"));
-            mineSprites.Add(MineSprite.MineLost, Resources.Load<Sprite>("minelost"));
+            mineSprites.Add(MineSprite.MineWon, mineSpriteAtlas.GetSprite("minewon"));
+            mineSprites.Add(MineSprite.MineLost, mineSpriteAtlas.GetSprite("minelost"));
 
-            mineSprites.Add(MineSprite.Hidden, Resources.Load<Sprite>("hidden"));
-            mineSprites.Add(MineSprite.Revealed, Resources.Load<Sprite>("revealed"));
-            mineSprites.Add(MineSprite.RevealedLost, Resources.Load<Sprite>("revealedlost"));
-            mineSprites.Add(MineSprite.RevealedWon, Resources.Load<Sprite>("revealedwon"));
+            mineSprites.Add(MineSprite.Hidden, mineSpriteAtlas.GetSprite("hidden"));
+            mineSprites.Add(MineSprite.Revealed, mineSpriteAtlas.GetSprite("revealed"));
+            mineSprites.Add(MineSprite.RevealedLost, mineSpriteAtlas.GetSprite("revealedlost"));
+            mineSprites.Add(MineSprite.RevealedWon, mineSpriteAtlas.GetSprite("revealedwon"));
         }
 
         public Sprite GetSprite(MineSprite spriteIdentifier)
